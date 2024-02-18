@@ -1,0 +1,69 @@
+roles 
+
+admin
+teacher 
+student
+
+need collection
+
+subject
+E_learning_content
+user
+role
+e_learning_wishlist
+
+collection details
+
+1.subject
+
+*title
+*description
+*image
+*status
+
+2.E_learning_content
+
+*title: String,
+*description: String,
+*subject: { type: mongoose.Schema.Types.ObjectId, ref: 'subjects' },
+*cover_image: String,
+*file: [String],
+*document: [String],
+*video: [String],
+*url: [String],
+*image: [String],
+*text: [String],
+
+3.user
+*name
+*email
+*mobile
+*ugc_code
+*role
+*subjects:[],
+
+4.e_learning_wishlist
+
+*user_id
+*e_learning_id
+*duration
+*date
+
+
+api list
+
+1.signup
+2.signin
+3.create subject
+4.subject DropDown
+5.e_learning get api base on subject id get also need
+6.e-e_learning status
+7.create e_learning
+8.update e_learning
+9.delete e_learning
+10.otp send 
+11.otp verify
+12.resend otp
+13.e_learning get api user watched duration get api also need
+14.video_start
+15.video_end
