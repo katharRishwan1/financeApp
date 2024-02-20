@@ -4,17 +4,17 @@ module.exports = mongoose.model(
     'user',
     new mongoose.Schema(
         {
-            ownerName: { type: String,},
+            userName: { type: String, },
             name: { type: String, trim: true },
             email: { type: String, trim: true, lowercase: true },
             mobile: { type: String, trim: true, unique: true },
             alternativeMobileNumber: { type: String, trim: true },
             password: String,
-            provider: {
-                type: String,
-                enum: ['Farm-Pod'],
-                default: 'Farm-Pod',
-            },
+            // provider: {
+            //     type: String,
+            //     enum: ['Farm-Pod'],
+            //     default: 'Farm-Pod',
+            // },
             role: { type: mongoose.Schema.Types.ObjectId, ref: 'role' },
             mobileVerified: {
                 type: Boolean,
@@ -28,6 +28,7 @@ module.exports = mongoose.model(
             pin_code: String,
             status: { type: String, enum: ['active', 'inactive'], default: 'active' },
             isDeleted: { type: Boolean, default: false },
+            adminApproved: { type: String, enum: ['approved', 'pending'], default: 'pending' },
         },
         { timestamps: true, versionKey: false }
     ),

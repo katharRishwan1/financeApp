@@ -1,0 +1,49 @@
+total roles
+admin
+user
+
+modules
+1.expense type
+2.income type
+3.expense model
+4.income model
+5.roles
+6.user
+7.
+
+*expense type model
+title
+description
+image
+status
+
+
+*income type model
+title
+description
+image
+status
+
+*expense
+expense type
+single amount
+createAt 
+count
+total amount 
+atatch ment
+designation
+description
+date
+
+*income
+income type
+single amount
+createAt 
+count
+total amount 
+atatch ment
+description
+designation
+date
+
+

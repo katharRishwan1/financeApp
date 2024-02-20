@@ -208,6 +208,46 @@ module.exports = {
             return res.internalServerError({ error });
         }
     },
+    userApprove: async (req, res) => {
+        try {
+            const filterQuery = { isDeleted: false };
+            const { status } = req.body
+            const _id = req.params.id
+            filterQuery._id = _id;
+            const unnecessary = {
+                password: 0, mobileVerified: 0,
+                emailVerified: 0,
+                isDeleted: 0,
+                createdAt: 0,
+                updatedAt: 0
+            }
+            const data = await UserModel.findOne(filterQuery, unnecessary).populate('role', 'name');
+            if (!data) {
+                return res.clientError({
+                    msg: 'user not found'
+                })
+            }
+            const update = await UserModel.updateOne(filterQuery, { adminApproved: status });
+            if (update) {
+                return res.success({
+                    msg: 'User Approved Successfully'
+                })
+            }
+
+        } catch (error) {
+            console.log('error.status', error);
+            if (error.status) {
+                if (error.status < 500) {
+                    return res.clientError({
+                        ...error.error,
+                        statusCode: error.status,
+                    });
+                }
+                return res.internalServerError({ ...error.error });
+            }
+            return res.internalServerError({ error });
+        }
+    }
     // createUser: async (req, res) => {
     //     try {
     //         const { error, validateData } = await validator.validateUserCr(req.body);

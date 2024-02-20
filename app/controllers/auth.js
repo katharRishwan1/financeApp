@@ -121,17 +121,24 @@ module.exports = {
             if (!ip) ip = '3523'
             console.log('chexkexist-----383', checkExists);
 
+            if (checkExists.adminApproved === "pending") {
+                return res.success({
+                    msg: "OTP Verifyed Successfully Please Wait For Admin Approved"
+                })
+
+            }
+
             const tokens = await redisAndToken(
                 checkExists._id.toString(),
                 device_id,
                 ip,
-                checkExists.role?checkExists.role.name:'default',
-                checkExists.role?checkExists.role._id.toString():'default',
+                checkExists.role ? checkExists.role.name : 'default',
+                checkExists.role ? checkExists.role._id.toString() : 'default',
             );
             const resultObj = { tokens };
             resultObj.user = checkExists;
             resultObj.user = { ...resultObj.user._doc };
-            resultObj.user.roleType = checkExists.role?checkExists.role.name: 'default';
+            resultObj.user.roleType = checkExists.role ? checkExists.role.name : 'default';
             resultObj.user = checkExists;
             resultObj.user = { ...resultObj.user._doc };
             if (resultObj.user.password) delete resultObj.user.password;
