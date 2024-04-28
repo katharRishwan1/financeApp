@@ -94,6 +94,7 @@ module.exports = {
                     msg: error
                 })
             }
+            console.log('its a demo-------',);
             const _id = req.params.id;
             if (!_id) {
                 return res.clientError({
