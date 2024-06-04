@@ -5,7 +5,7 @@ const IncomeType = db.incomeType;
 module.exports = {
     createIncomeType: async (req, res) => {
         try {
-            const { error, validateData } = await validator.createIncomeType(req.body);
+            const { error, validateData } = await validator.validateCreateIncoemType(req.body);
             if (error) {
                 return res.clientError({
                     msg: error

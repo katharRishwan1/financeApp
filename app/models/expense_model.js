@@ -6,15 +6,10 @@ module.exports = mongoose.model(
         {
             expenseType: { type: String, uppercase: true },
             description: String,
-            singleAmount: Number,
-            count: Number,
-            totalAmount: Number,
-            atatchMent: String,
-            designation: String,
-            createAt: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+            createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
             date: String,
-            display: { type: Boolean, default: false },
-            isDeleted: { type: Boolean, default: false }
+            atatchMent: String,
+            isDeleted: { type: Boolean, default: false },
         },
         { timestamps: true, versionKey: false }
     ),

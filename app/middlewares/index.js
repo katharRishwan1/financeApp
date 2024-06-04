@@ -1,5 +1,7 @@
 const responseMessages = require('./response-messages');
 const { verifyAccessToken } = require('../services/jwt_helper');
+const { required } = require('joi');
+const config = require('../config/config')
 
 module.exports = {
     checkSetToken: () => async (req, res, next) => {
@@ -39,5 +41,22 @@ module.exports = {
         req.hitUrl = baseUrlToAppend + req.url;
         console.log(baseUrlToAppend, req.hitUrl);
         return next();
+    },
+
+    checkRoles:(allowedRolesShortNames = []) =>
+    async (req, res, next) => {
+      try {
+        const allowedRoles = allowedRolesShortNames.map((roleShortName) => config.roleNames[roleShortName] || '');
+
+        console.log('allowedRoles--', allowedRoles, req.decoded.roleType);
+        const roleAllowed = allowedRoles.includes(req.decoded.roleType);
+        if (roleAllowed) {
+          return next();
+        }
+        return res.unauthorized({ msg: responseMessages[1005] });
+      } catch (error) {
+        console.log('\n role check error...', error);
+        return res.unauthorized({ msg: responseMessages[1006] });
+      }
     },
 };

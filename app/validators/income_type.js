@@ -1,13 +1,13 @@
 const commonService = require('../services/common_services');
 const { Joi } = require('../services/imports');
 
-const create = Joi.object({
+const createIncomeType = Joi.object({
     title: Joi.string().required().error(commonService.getValidationMessage),
     description: Joi.string().optional().allow('', null).error(commonService.getValidationMessage),
     image: Joi.string().optional().error(commonService.getValidationMessage),
 }).error(commonService.getValidationMessage);
 
-const update = Joi.object({
+const updateIncomeType = Joi.object({
     title: Joi.string().optional().error(commonService.getValidationMessage),
     description: Joi.string().optional().allow('', null).error(commonService.getValidationMessage),
     image: Joi.string().optional().error(commonService.getValidationMessage),
@@ -27,7 +27,7 @@ async function validateFunc(schemaName, dataToValidate) {
 }
 
 module.exports = {
-    validateCreateIncoemType: async (dataToValidate) => validateFunc(create, dataToValidate),
-    validateUpdateIncomeType: async (dataToValidate) => validateFunc(update, dataToValidate),
+    validateCreateIncoemType: async (dataToValidate) => validateFunc(createIncomeType, dataToValidate),
+    validateUpdateIncomeType: async (dataToValidate) => validateFunc(updateIncomeType, dataToValidate),
 
 };

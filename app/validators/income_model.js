@@ -1,26 +1,20 @@
 const commonService = require('../services/common_services');
 const { Joi } = require('../services/imports');
 
-const create = Joi.object({
-    expenseType: Joi.string().required().error(commonService.getValidationMessage),
-    singleAmount: Joi.number().optional().allow('', null).error(commonService.getValidationMessage),
-    totalAmount: Joi.number().required().error(commonService.getValidationMessage),
-    count: Joi.number().optional().error(commonService.getValidationMessage),
+const createIncome = Joi.object({
+    incomeType: Joi.string().required().error(commonService.getValidationMessage),
     atatchMent: Joi.string().optional().error(commonService.getValidationMessage),
-    designation: Joi.string().optional().error(commonService.getValidationMessage),
+    amount: Joi.string().required().error(commonService.getValidationMessage),
     description: Joi.string().optional().error(commonService.getValidationMessage),
     date: Joi.string().optional().error(commonService.getValidationMessage),
 }).error(commonService.getValidationMessage);
 
-const update = Joi.object({
-    incomeType: Joi.string().optional().allow('', null).error(commonService.getValidationMessage),
-    singleAmount: Joi.number().optional().allow('', null).error(commonService.getValidationMessage),
-    totalAmount: Joi.number().optional().allow('', null).error(commonService.getValidationMessage),
-    count: Joi.number().optional().allow('', null).error(commonService.getValidationMessage),
-    atatchMent: Joi.string().optional().allow('', null).optional().error(commonService.getValidationMessage),
-    designation: Joi.string().optional().allow('', null).optional().error(commonService.getValidationMessage),
-    description: Joi.string().optional().allow('', null).optional().error(commonService.getValidationMessage),
-    date: Joi.string().optional().allow('', null).error(commonService.getValidationMessage),
+const updateIncome = Joi.object({
+    incomeType: Joi.string().required().error(commonService.getValidationMessage),
+    atatchMent: Joi.string().optional().error(commonService.getValidationMessage),
+    amount: Joi.string().required().error(commonService.getValidationMessage),
+    description: Joi.string().optional().error(commonService.getValidationMessage),
+    date: Joi.string().optional().error(commonService.getValidationMessage),
 }).error(commonService.getValidationMessage);
 async function validateFunc(schemaName, dataToValidate) {
     try {
@@ -37,7 +31,7 @@ async function validateFunc(schemaName, dataToValidate) {
 }
 
 module.exports = {
-    validateCreateIncoem: async (dataToValidate) => validateFunc(create, dataToValidate),
-    validateUpdateIncome: async (dataToValidate) => validateFunc(update, dataToValidate),
+    validateCreateIncoem: async (dataToValidate) => validateFunc(createIncome, dataToValidate),
+    validateUpdateIncome: async (dataToValidate) => validateFunc(updateIncome, dataToValidate),
 
 };

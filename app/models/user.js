@@ -10,11 +10,6 @@ module.exports = mongoose.model(
             mobile: { type: String, trim: true, unique: true },
             alternativeMobileNumber: { type: String, trim: true },
             password: String,
-            // provider: {
-            //     type: String,
-            //     enum: ['Farm-Pod'],
-            //     default: 'Farm-Pod',
-            // },
             role: { type: mongoose.Schema.Types.ObjectId, ref: 'role' },
             mobileVerified: {
                 type: Boolean,

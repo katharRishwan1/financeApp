@@ -1,13 +1,13 @@
 const commonService = require('../services/common_services');
 const { Joi } = require('../services/imports');
 
-const create = Joi.object({
+const createRole = Joi.object({
     name: Joi.string().required().error(commonService.getValidationMessage),
     description: Joi.string().optional().allow('', null).error(commonService.getValidationMessage),
     display: Joi.string().optional().error(commonService.getValidationMessage),
 }).error(commonService.getValidationMessage);
 
-const update = Joi.object({
+const updateRole = Joi.object({
     name: Joi.string().optional().error(commonService.getValidationMessage),
     description: Joi.string().optional().allow('', null).error(commonService.getValidationMessage),
     display: Joi.string().optional().error(commonService.getValidationMessage),
@@ -27,7 +27,7 @@ async function validateFunc(schemaName, dataToValidate) {
 }
 
 module.exports = {
-    validateRoleCrate: async (dataToValidate) => validateFunc(create, dataToValidate),
-    validateRoleUpdate: async (dataToValidate) => validateFunc(update, dataToValidate),
+    validateRoleCrate: async (dataToValidate) => validateFunc(createRole, dataToValidate),
+    validateRoleUpdate: async (dataToValidate) => validateFunc(updateRole, dataToValidate),
 
 };
