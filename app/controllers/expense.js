@@ -1,6 +1,7 @@
 const responseMessages = require('../middlewares/response-messages');
 const db = require('../models');
 const validator = require('../validators/expense_model');
+const {paginationFn} = require('../utils/commonUtils');
 const Expense = db.expense;
 module.exports = {
     createExpense: async (req, res) => {
@@ -44,7 +45,7 @@ module.exports = {
     getExpense: async (req, res) => {
         try {
             const _id = req.params.id;
-            console.log('get role-------', req.decoded);
+            const {perPage, currentPage} = req.query
             const filter = { isDeleted: false };
             if (_id) {
                 filter._id = _id;
@@ -55,22 +56,39 @@ module.exports = {
                         result: data
                     })
                 }
-                return res.clientError({
+                return res.success({
                     msg: responseMessages[1012]
                 })
             }
-            const getRoles = await Expense.find(filter);
-            if (!getRoles.length) {
-                res.success({
-                    msg: responseMessages[1012],
-                    result: getRoles,
+            let { rows, pagination } = await paginationFn(
+                res,
+                db.expense,
+                filter,
+                perPage,
+                currentPage
+              );
+              if (!rows.length) {
+                return res.success({
+                  msg: responseMessages[1012],
                 });
-            } else {
+              } else {
                 res.success({
-                    msg: 'data list',
-                    result: getRoles,
+                    msg: responseMessages[1008],
+                    result: {rows,pagination}
                 });
             }
+            // const getRoles = await Expense.find(filter);
+            // if (!getRoles.length) {
+            //     res.success({
+            //         msg: responseMessages[1012],
+            //         result: getRoles,
+            //     });
+            // } else {
+            //     res.success({
+            //         msg: 'data list',
+            //         result: getRoles,
+            //     });
+            // }
         } catch (error) {
             console.log('error.status', error);
             if (error.status) {
@@ -106,17 +124,16 @@ module.exports = {
                     msg: responseMessages[1012],
                 });
             }
-            const updData = {};
-            if (req.body.name) updData.name = req.body.name;
-            if (req.body.description) updData.description = req.body.description;
-            if (req.body.display) updData.display = req.body.display;
             // const checkUnique = await Expense.findOne({ _id: { $ne: _id }, name, isDeleted: false });
             // if (checkUnique) {
             //     return res.clientError({
             //         msg: `${name} this type of data is Already exist`,
             //     });
             // }
-
+            const updData = {};
+            Object.keys(req.body).forEach((key) => {
+                updData[key] = req.body[key];
+            });
             const data = await Expense.updateOne({ _id }, updData);
             if (data.modifiedCount) {
                 res.success({

@@ -14,7 +14,11 @@ const envConfigs = {
     roleNames: {
         ad: 'ADMIN',
         us: 'USER',
-    }
+    },
+    awsBucketName: process.env.AWS_BUCKET_NAME,
+    awsAccessKey: process.env.AWS_ACCESS_KEY,
+    awsSecretKey: process.env.AWS_SECRET_KEY,
+    awsRegion: process.env.AWS_BUCKET_REGION,
 };
 console.log('datadase key----', process.env.MONGODB_DEV_URI);
 module.exports = { ...envConfigs }

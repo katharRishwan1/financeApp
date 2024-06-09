@@ -1,30 +1,33 @@
 const responseMessages = require('../middlewares/response-messages');
 const db = require('../models');
-const validator = require('../validators/role');
-const RolesModel = db.role;
+const validator = require('../validators/EB-bill');
+const {paginationFn} = require('../utils/commonUtils');
+
 module.exports = {
-    createRole: async (req, res) => {
+    createEbBill: async (req, res) => {
         try {
-            const { error, validateData } = await validator.validateRoleCrate(req.body);
+            const { error, validateData } = await validator.validatecreateEbBill(req.body);
             if (error) {
                 return res.clientError({
                     msg: error
                 })
             }
-            const checkExists = await RolesModel.findOne({ name: req.body.name });
-            if (checkExists) {
-                return res.clientError({
-                    msg: `Similar role already exists with name ${req.body.name}`,
-                });
-            }
-            const data = await RolesModel.create(req.body);
+            // const checkExists = await db.storeMaster.findOne({ storeNumber: req.body.storeNumber, ownerName: req.body.ownerName  });
+            // if (checkExists) {
+            //     return res.clientError({
+            //         msg: `Similar  already exists with store number ${req.body.storeNumber}`,
+            //     });
+            // }
+            req.body.createdBy = req.decoded.user_id
+            const data = await db.eb_bill.create(req.body);
             if (data && data._id) {
-                res.clientError({
-                    msg: `${req.body.name} role created successfully!!!`,
+                res.success({
+                    msg: `data created successfully!!!`,
+                    result: data
                 });
             } else {
-                res.clientError({
-                    msg: `${req.body.name} role creation failed`,
+                res.success({
+                    msg: ` data creation failed`,
                 });
             }
         } catch (error) {
@@ -41,36 +44,43 @@ module.exports = {
             return res.internalServerError({ error });
         }
     },
-    getRole: async (req, res) => {
+    getEbBill: async (req, res) => {
         try {
             const _id = req.params.id;
-            console.log('get role-------', req.decoded);
+            const {perPage, currentPage} = req.query
             const filter = { isDeleted: false };
             if (_id) {
                 filter._id = _id;
-                const data = await RolesModel.findOne(filter);
+                const data = await db.eb_bill.findOne(filter).populate(populateValue);
                 if (data) {
                     return res.success({
                         msg: 'request access',
                         result: data
                     })
                 }
-                return res.clientError({
+                return res.success({
                     msg: responseMessages[1012]
                 })
             }
-            const getRoles = await RolesModel.find(filter);
-            if (!getRoles.length) {
-                res.success({
-                    msg: responseMessages[1012],
-                    result: getRoles,
+            let { rows, pagination } = await paginationFn(
+                res,
+                db.eb_bill,
+                filter,
+                perPage,
+                currentPage,
+                populateValue
+              );
+              if (!rows.length) {
+                return res.success({
+                  msg: responseMessages[1012],
                 });
-            } else {
+              } else {
                 res.success({
-                    msg: 'Roles list',
-                    result: getRoles,
+                    msg: responseMessages[1008],
+                    result: {rows,pagination}
                 });
             }
+           
         } catch (error) {
             console.log('error.status', error);
             if (error.status) {
@@ -85,46 +95,45 @@ module.exports = {
             return res.internalServerError({ error });
         }
     },
-    updateRole: async (req, res) => {
+    updateEbBill: async (req, res) => {
         try {
-            const { name } = req.body;
-            const { error, validateData } = await validator.validateRoleUpdate(req.body);
+            const { error, validateData } = await validator.validateUpdateEbBill(req.body);
             if (error) {
-                return res.clientError({
+                return res.success({
                     msg: error
                 })
             }
             const _id = req.params.id;
             if (!_id) {
-                return res.clientError({
-                    msg: responseMessages[1018],
+                return res.success({
+                    msg: responseMessages[1015],
                 });
             }
-            const checkExists = await RolesModel.findOne({ _id, isDeleted: false });
+            const checkExists = await db.eb_bill.findOne({ _id, isDeleted: false });
             if (!checkExists) {
-                return res.clientError({
+                return res.success({
                     msg: responseMessages[1012],
                 });
             }
-            const checkUnique = await RolesModel.findOne({ _id: { $ne: _id }, name, isDeleted: false });
-            if (checkUnique) {
-                return res.clientError({
-                    msg: `${name} this type of role is Already taken`,
-                });
-            }
+            // const checkUnique = await db.rendDetails.findOne({ _id: { $ne: _id }, storeNumber, ownerName, isDeleted: false });
+            // if (checkUnique) {
+            //     return res.clientError({
+            //         msg: `${storeNumber} this type of data is Already exist`,
+            //     });
+            // }
             const updData = {};
             Object.keys(req.body).forEach((key) => {
                 updData[key] = req.body[key];
             });
-            const data = await RolesModel.updateOne({ _id }, updData);
+            const data = await db.eb_bill.updateOne({ _id }, updData);
             if (data.modifiedCount) {
                 res.success({
                     result: data,
-                    msg: 'Roles Updated Successfully',
+                    msg: 'Updated Successfully',
                 });
             } else {
-                res.clientError({
-                    msg: 'Failed to update role, pls try again',
+                res.success({
+                    msg: 'Failed to update, pls try again',
                 });
             }
         } catch (error) {
@@ -141,29 +150,29 @@ module.exports = {
             return res.internalServerError({ error });
         }
     },
-    deleteRole: async (req, res) => {
+    deleteEbBill: async (req, res) => {
         try {
             const _id = req.params.id;
             if (!_id) {
-                return res.clientError({
-                    msg: responseMessages[1018],
+                return res.success({
+                    msg: responseMessages[1015],
                 });
             }
-            const checkExists = await RolesModel.findOne({ _id, isDeleted: false });
+            const checkExists = await db.eb_bill.findOne({ _id, isDeleted: false });
             if (!checkExists) {
-                return res.clientError({
+                return res.success({
                     msg: responseMessages[1012],
                 });
             }
-            const data = await RolesModel.updateOne({ _id }, { isDeleted: true });
+            const data = await db.eb_bill.updateOne({ _id }, { isDeleted: true });
             if (data.modifiedCount) {
                 res.success({
-                    msg: 'Role deleted successfully',
+                    msg: 'deleted successfully',
                     result: data,
                 });
             } else {
-                res.clientError({
-                    msg: 'Role deletion failed',
+                res.success({
+                    msg: 'deletion failed',
                 });
             }
         } catch (error) {

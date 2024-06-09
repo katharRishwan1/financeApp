@@ -1,6 +1,7 @@
 const responseMessages = require('../middlewares/response-messages');
 const db = require('../models');
 const validator = require('../validators/income_model');
+const {paginationFn} = require('../utils/commonUtils');
 const Income = db.income;
 module.exports = {
     createIncome: async (req, res) => {
@@ -20,11 +21,11 @@ module.exports = {
             const data = await Income.create(req.body);
             if (data && data._id) {
                 res.clientError({
-                    msg: `${req.body.name} data created successfully!!!`,
+                    msg: `${req.body.title} data created successfully!!!`,
                 });
             } else {
                 res.clientError({
-                    msg: `${req.body.name} creation failed`,
+                    msg: `${req.body.title} creation failed`,
                 });
             }
         } catch (error) {
@@ -44,11 +45,12 @@ module.exports = {
     getIncome: async (req, res) => {
         try {
             const _id = req.params.id;
-            console.log('get role-------', req.decoded);
+            const {perPage, currentPage} = req.query
             const filter = { isDeleted: false };
+            const populateValue = [{path:'giver', select:'name mobile'},{path:'createdBy', select:'name mobile'}]
             if (_id) {
                 filter._id = _id;
-                const data = await Income.findOne(filter);
+                const data = await Income.findOne(filter).populate(populateValue);
                 if (data) {
                     return res.success({
                         msg: 'request access',
@@ -59,18 +61,36 @@ module.exports = {
                     msg: responseMessages[1012]
                 })
             }
-            const getIncomeType = await Income.find(filter);
-            if (!getRoles.length) {
-                res.success({
-                    msg: responseMessages[1012],
-                    result: getIncomeType,
+            let { rows, pagination } = await paginationFn(
+                res,
+                db.income,
+                filter,
+                perPage,
+                currentPage,
+                populateValue
+              );
+              if (!rows.length) {
+                return res.success({
+                  msg: responseMessages[1012],
                 });
-            } else {
+              } else {
                 res.success({
-                    msg: 'Roles list',
-                    result: getIncomeType,
+                    msg: responseMessages[1008],
+                    result: {rows,pagination}
                 });
             }
+            // const getIncomeType = await Income.find(filter);
+            // if (!getRoles.length) {
+            //     res.success({
+            //         msg: responseMessages[1012],
+            //         result: getIncomeType,
+            //     });
+            // } else {
+            //     res.success({
+            //         msg: 'Roles list',
+            //         result: getIncomeType,
+            //     });
+            // }
         } catch (error) {
             console.log('error.status', error);
             if (error.status) {
@@ -96,27 +116,26 @@ module.exports = {
             }
             const _id = req.params.id;
             if (!_id) {
-                return res.clientError({
-                    msg: responseMessages[1015],
+                return res.success({
+                    msg: responseMessages[1018],
                 });
             }
             const checkExists = await Income.findOne({ _id, isDeleted: false });
             if (!checkExists) {
-                return res.clientError({
+                return res.success({
                     msg: responseMessages[1012],
                 });
             }
-            const updData = {};
-            if (req.body.name) updData.name = req.body.name;
-            if (req.body.description) updData.description = req.body.description;
-            if (req.body.display) updData.display = req.body.display;
             // const checkUnique = await Income.findOne({ _id: { $ne: _id }, name, isDeleted: false });
             // if (checkUnique) {
             //     return res.clientError({
             //         msg: `${name} this type of role is Already taken`,
             //     });
             // }
-
+            const updData = {};
+            Object.keys(req.body).forEach((key) => {
+                updData[key] = req.body[key];
+            });
             const data = await Income.updateOne({ _id }, updData);
             if (data.modifiedCount) {
                 res.success({
@@ -147,7 +166,7 @@ module.exports = {
             const _id = req.params.id;
             if (!_id) {
                 return res.clientError({
-                    msg: responseMessages[1015],
+                    msg: responseMessages[1018],
                 });
             }
             const checkExists = await Income.findOne({ _id, isDeleted: false });

@@ -13,7 +13,8 @@ const responseMessages = {
     1014: 'Email or Mobile is Already Exist',
     1015: 'otp sent successfully!!',
     1016: 'otp sent failed..',
-    1017: 'otp verified successfully!!!'
+    1017: 'otp verified successfully!!!',
+    1018: 'ID must be required',
 };
 
 module.exports = responseMessages;

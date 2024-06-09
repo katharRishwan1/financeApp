@@ -15,6 +15,7 @@ const exportsJson = {
     axios: require('axios'),
     asyncRedis: require('async-redis'),
     nodeMailer: require('nodemailer'),
+    AWS: require('aws')
 
 };
 module.exports = {
