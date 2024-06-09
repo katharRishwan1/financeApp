@@ -2,6 +2,7 @@ const responseMessages = require('../middlewares/response-messages');
 const db = require('../models');
 const validator = require('../validators/wages');
 const {paginationFn} = require('../utils/commonUtils');
+const {moment} = require('../services/imports');
 
 module.exports = {
     createWages: async (req, res) => {
@@ -21,6 +22,14 @@ module.exports = {
             req.body.createdBy = req.decoded.user_id
             const data = await db.wages.create(req.body);
             if (data && data._id) {
+
+                req.body.expenseType = "6665ee98913deebfe3fb9f6b"
+                req.body.createdBy = req.decoded.user_id
+                req.body.date = moment().format('YYYY-MM-DD')
+                req.body.amount = data.amount
+
+                 await db.expense.create(req.body);
+
                 res.success({
                     msg: `data created successfully!!!`,
                     result: data
@@ -49,9 +58,10 @@ module.exports = {
             const _id = req.params.id;
             const {perPage, currentPage} = req.query
             const filter = { isDeleted: false };
+            const populateValue = [{path:"createdBy", select:" name mobile"}]
             if (_id) {
                 filter._id = _id;
-                const data = await db.wages.findOne(filter)
+                const data = await db.wages.findOne(filter).populate(populateValue)
                 if (data) {
                     return res.success({
                         msg: 'request access',
@@ -67,7 +77,8 @@ module.exports = {
                 db.wages,
                 filter,
                 perPage,
-                currentPage
+                currentPage,
+                populateValue
               );
               if (!rows.length) {
                 return res.success({

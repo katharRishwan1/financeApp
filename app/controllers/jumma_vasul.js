@@ -1,7 +1,8 @@
 const responseMessages = require('../middlewares/response-messages');
 const db = require('../models');
 const validator = require('../validators/jumma_vasul');
-const {paginationFn} = require('../utils/commonUtils');
+const { paginationFn } = require('../utils/commonUtils');
+const {moment} = require('../services/imports');
 
 module.exports = {
     createJummaVasul: async (req, res) => {
@@ -19,8 +20,17 @@ module.exports = {
             //     });
             // }
             req.body.createdBy = req.decoded.user_id
+            req.body.date = moment().format('YYYY-MM-DD')
             const data = await db.jummaVasul.create(req.body);
             if (data && data._id) {
+
+                req.body.incomeType = "6665e76cd740de00b3617456"
+                req.body.createdBy = req.decoded.user_id
+                req.body.date = moment().format('YYYY-MM-DD')
+                req.body.amount = data.amount
+
+                await db.income.create(req.body);
+
                 res.success({
                     msg: `data created successfully!!!`,
                     result: data
@@ -47,9 +57,9 @@ module.exports = {
     getJummaVasul: async (req, res) => {
         try {
             const _id = req.params.id;
-            const {perPage, currentPage} = req.query
+            const { perPage, currentPage } = req.query
             const filter = { isDeleted: false };
-            const populateValue = [{path:'ownerName', select:'name mobile'},{path:'createdBy', select:'name mobile'}]
+            const populateValue = [{ path: 'createdBy', select: 'name mobile' }]
             if (_id) {
                 filter._id = _id;
                 const data = await db.jummaVasul.findOne(filter).populate(populateValue);
@@ -70,18 +80,18 @@ module.exports = {
                 perPage,
                 currentPage,
                 populateValue
-              );
-              if (!rows.length) {
+            );
+            if (!rows.length) {
                 return res.success({
-                  msg: responseMessages[1012],
+                    msg: responseMessages[1012],
                 });
-              } else {
+            } else {
                 res.success({
                     msg: responseMessages[1008],
-                    result: {rows,pagination}
+                    result: { rows, pagination }
                 });
             }
-           
+
         } catch (error) {
             console.log('error.status', error);
             if (error.status) {

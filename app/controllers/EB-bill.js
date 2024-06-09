@@ -2,6 +2,7 @@ const responseMessages = require('../middlewares/response-messages');
 const db = require('../models');
 const validator = require('../validators/EB-bill');
 const {paginationFn} = require('../utils/commonUtils');
+const {moment} = require('../services/imports')
 
 module.exports = {
     createEbBill: async (req, res) => {
@@ -21,6 +22,14 @@ module.exports = {
             req.body.createdBy = req.decoded.user_id
             const data = await db.eb_bill.create(req.body);
             if (data && data._id) {
+
+                req.body.expenseType = "666205deddeff6734cf5221b"
+                req.body.createdBy = req.decoded.user_id
+                req.body.date = moment().format('YYYY-MM-DD')
+                req.body.amount = data.amount
+
+                 await db.expense.create(req.body);
+
                 res.success({
                     msg: `data created successfully!!!`,
                     result: data
@@ -49,6 +58,7 @@ module.exports = {
             const _id = req.params.id;
             const {perPage, currentPage} = req.query
             const filter = { isDeleted: false };
+            const populateValue = [{path:"createdBy", select:" name mobile"}]
             if (_id) {
                 filter._id = _id;
                 const data = await db.eb_bill.findOne(filter).populate(populateValue);

@@ -4,10 +4,11 @@ module.exports = mongoose.model(
     'expense',
     new mongoose.Schema(
         {
-            expenseType: { type: String, uppercase: true },
+            expenseType: { type: mongoose.Schema.Types.ObjectId, ref: 'expense_type' },
             description: String,
             createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
             date: String,
+            amount: Number,
             atatchMent: String,
             isDeleted: { type: Boolean, default: false },
         },

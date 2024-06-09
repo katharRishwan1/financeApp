@@ -41,14 +41,13 @@ module.exports = {
 
                 await db.taxMaster.updateOne({_id: findTax._id}, upData);
 
-                req,body.incomeType = "66620360b450ca9eaaa3e320"
+                req.body.incomeType = "66620360b450ca9eaaa3e320"
                 req.body.giver = data.user_id
                 req.body.createdBy = req.decoded.user_id
-                req.body.date = new Date()
+                req.body.date = moment().format('YYYY-MM-DD')
                 req.body.amount = data.amount
 
-                const data1 = await db.income.create(req.body);
-                console.log('data-------',data1)
+                await db.income.create(req.body);
 
                 res.success({
                     msg: `Data created successfully!!!`,
