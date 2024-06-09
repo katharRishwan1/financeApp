@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const exportsJson = {
     express: require('express'),
     dotenv: require('dotenv'),
@@ -15,7 +17,8 @@ const exportsJson = {
     axios: require('axios'),
     asyncRedis: require('async-redis'),
     nodeMailer: require('nodemailer'),
-    AWS: require('aws')
+    AWS: require('aws'),
+    moment: require('moment')
 
 };
 module.exports = {

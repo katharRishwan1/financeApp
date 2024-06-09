@@ -22,6 +22,7 @@ module.exports = {
             if (data && data._id) {
                 res.clientError({
                     msg: `${req.body.title} created successfully!!!`,
+                    result: data
                 });
             } else {
                 res.clientError({

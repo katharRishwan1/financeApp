@@ -4,8 +4,11 @@ module.exports = mongoose.model(
     'EB-bill',
     new mongoose.Schema(
         {
-            amount: String,
+            title: String,
+            amount: Number,
             date: Date,
+            numberOfUnit: String,
+            attachment: String,
             createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
             isDeleted: { type: Boolean, default: false },
         },
