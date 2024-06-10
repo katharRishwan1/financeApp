@@ -127,14 +127,19 @@ module.exports = {
                 })
 
             }
-
-            const tokens = await redisAndToken(
-                checkExists._id.toString(),
-                device_id,
-                ip,
-                checkExists.role ? checkExists.role.name : 'default',
-                checkExists.role ? checkExists.role._id.toString() : 'default',
-            );
+            const payload = {
+                user_id: checkExists._id.toString(),
+                role: checkExists.role.name,
+                role_id:checkExists.role._id
+            };
+            const tokens = await jwtHelper.signAccessToken(payload)
+            // const tokens = await redisAndToken(
+            //     checkExists._id.toString(),
+            //     device_id,
+            //     ip,
+            //     checkExists.role ? checkExists.role.name : 'default',
+            //     checkExists.role ? checkExists.role._id.toString() : 'default',
+            // );
             const resultObj = { tokens };
             resultObj.user = checkExists;
             resultObj.user = { ...resultObj.user._doc };
@@ -234,13 +239,20 @@ module.exports = {
             // };
             console.log('--------------');
             /** TOKEN GENERATION START */
-            const tokens = await redisAndToken(
-                checkExists._id.toString(),
-                device_id,
-                ip,
-                getRoleId.name,
-                checkExists.role._id.toString()
-            );
+            const payload = {
+                user_id: checkExists._id.toString(),
+                role: checkExists.role.name,
+                role_id:checkExists.role._id
+            };
+            const tokens = await jwtHelper.signAccessToken(payload)
+
+            // const tokens = await redisAndToken(
+            //     checkExists._id.toString(),
+            //     device_id,
+            //     ip,
+            //     getRoleId.name,
+            //     checkExists.role._id.toString()
+            // );
             // const token = await jwtHelper.signAccessToken(payload)
             console.log('chexkexist-----383',);
             const resultObj = { tokens };
