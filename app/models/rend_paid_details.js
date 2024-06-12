@@ -6,7 +6,7 @@ module.exports = mongoose.model(
         {
             store_id: { type: mongoose.Schema.Types.ObjectId, ref: 'store_master' },
             month: String,
-            createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+            createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
             date: Date,
             isDeleted: { type: Boolean, default: false },
         },

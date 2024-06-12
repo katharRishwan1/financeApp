@@ -6,7 +6,7 @@ module.exports = mongoose.model(
         {
             expenseType: { type: mongoose.Schema.Types.ObjectId, ref: 'expense_type' },
             description: String,
-            createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+            createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
             date: String,
             amount: Number,
             atatchMent: String,

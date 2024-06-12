@@ -5,11 +5,11 @@ module.exports = mongoose.model(
     new mongoose.Schema(
         {
             tasx_id: { type: mongoose.Schema.Types.ObjectId, ref: 'tax_master' },
-            user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+            user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
             paidDate: Date,
             amount: Number,
-            collectedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
-            createBy: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+            collectedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
+            createBy: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
             status: { type: String, enum: ['active', 'inactive'], default: 'active' },
             isDeleted: { type: Boolean, default: false }
         },

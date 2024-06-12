@@ -47,9 +47,12 @@ module.exports = {
             const _id = req.params.id;
             const {perPage, currentPage} = req.query
             const filter = { isDeleted: false };
+            const populateValue = [
+            {path:'createdBy', select:'name mobile'},
+            {path:'expenseType', select:'title'}]
             if (_id) {
                 filter._id = _id;
-                const data = await Expense.findOne(filter);
+                const data = await Expense.findOne(filter).populate(populateValue);
                 if (data) {
                     return res.success({
                         msg: 'request access',
@@ -65,7 +68,8 @@ module.exports = {
                 db.expense,
                 filter,
                 perPage,
-                currentPage
+                currentPage,
+                populateValue
               );
               if (!rows.length) {
                 return res.success({

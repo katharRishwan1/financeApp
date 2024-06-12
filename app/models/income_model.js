@@ -6,8 +6,8 @@ module.exports = mongoose.model(
         {
             incomeType: { type: mongoose.Schema.Types.ObjectId, ref: 'income_type' },
             description: String,
-            createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
-            giver: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+            createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
+            giver: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
             date: Date,
             atatchMent: String,
             amount: Number,

@@ -47,7 +47,9 @@ module.exports = {
             const _id = req.params.id;
             const {perPage, currentPage} = req.query
             const filter = { isDeleted: false };
-            const populateValue = [{path:'giver', select:'name mobile'},{path:'createdBy', select:'name mobile'}]
+            const populateValue = [{path:'giver', select:'name mobile'},
+            {path:'createdBy', select:'name mobile'},
+            {path:'incomeType', select:'title'}]
             if (_id) {
                 filter._id = _id;
                 const data = await Income.findOne(filter).populate(populateValue);
