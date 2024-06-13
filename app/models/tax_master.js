@@ -6,8 +6,8 @@ module.exports = mongoose.model(
         {
             title: String,
             description: String,
-            collectors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }], 
-            users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }], 
+            collectors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }], 
+            users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }], 
             amount: Number,
             totalTargetAmount: {type: Number, default:0},
             collectedAmount: {type: Number, default:0},

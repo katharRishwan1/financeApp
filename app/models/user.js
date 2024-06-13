@@ -1,7 +1,7 @@
 const { mongoose } = require('../services/imports');
 
 module.exports = mongoose.model(
-    'user',
+    'users',
     new mongoose.Schema(
         {
             userName: { type: String, },

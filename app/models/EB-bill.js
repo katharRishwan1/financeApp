@@ -9,7 +9,7 @@ module.exports = mongoose.model(
             date: Date,
             numberOfUnit: String,
             attachment: String,
-            createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+            createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
             isDeleted: { type: Boolean, default: false },
         },
         { timestamps: true, versionKey: false }

@@ -1,24 +1,25 @@
 const responseMessages = require('../middlewares/response-messages');
 const db = require('../models');
 const validator = require('../validators/user');
+const {paginationFn} = require('../utils/commonUtils')
 
-const UserModel = db.user;
-const OrderModel = db.order;
 module.exports = {
     getUsers: async (req, res) => {
         try {
             const _id = req.params.id;
+            const { perPage, currentPage } = req.query
             const filterQuery = { isDeleted: false };
-            const unnecessary = {
+            const select = {
                 password: 0, mobileVerified: 0,
                 emailVerified: 0,
                 isDeleted: 0,
                 createdAt: 0,
                 updatedAt: 0
             }
+            const populateValue = [{path:'role', select:'name'}]
             if (_id) {
                 filterQuery._id = _id;
-                const data = await UserModel.findOne(filterQuery, unnecessary).populate('role', 'name')
+                const data = await db.user.findOne(filterQuery, unnecessary).populate(populateValue)
                 if (data) {
                     return res.success({
                         msg: 'request access',
@@ -29,33 +30,39 @@ module.exports = {
                     msg: responseMessages[1012]
                 })
             }
-            const data = await UserModel.find(filterQuery, unnecessary).populate('role', 'name');
-            const users = [];
-            data.forEach((val) => {
-                if (val.role.name == 'USER') {
-                    users.push(val._id.toString())
-                }
-            });
-            const orders = await OrderModel.find({ user: { $in: users }, status: 'delivery' });
 
-            const ids = orders.map((val) => {
-                return val.user.toString()
-            });
-
-            const result = data.map((value) => {
-
-            })
-            if (!data.length) {
+            let { rows, pagination } = await paginationFn(
+                res,
+                db.user,
+                filterQuery,
+                perPage,
+                currentPage,
+                populateValue,
+                sort= null,
+                select
+              );
+              if (!rows.length) {
                 return res.success({
-                    msg: responseMessages[1012],
-                    result: data,
+                  msg: responseMessages[1012],
                 });
-            } else {
-                return res.success({
-                    msg: 'users list',
-                    result: data,
+              } else {
+                res.success({
+                    msg: responseMessages[1008],
+                    result: {rows,pagination}
                 });
             }
+            // const data = await UserModel.find(filterQuery, unnecessary).populate('role', 'name');
+            // if (!data.length) {
+            //     return res.success({
+            //         msg: responseMessages[1012],
+            //         result: data,
+            //     });
+            // } else {
+            //     return res.success({
+            //         msg: 'users list',
+            //         result: data,
+            //     });
+            // }
         } catch (error) {
             console.log('error.status', error);
             if (error.status) {
